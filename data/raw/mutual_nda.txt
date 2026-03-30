@@ -1,0 +1,137 @@
+MUTUAL NON-DISCLOSURE AGREEMENT
+
+This Mutual Non-Disclosure Agreement ("Agreement") is made and entered into as of March 1, 2025 ("Effective Date"), by and between:
+
+Party A: Nexus Innovations Corp., a California corporation, with offices at 1200 Technology Boulevard, Palo Alto, CA 94301 ("Nexus")
+
+Party B: Apex Data Systems LLC, a Texas limited liability company, with offices at 500 Commerce Street, Suite 400, Dallas, TX 75201 ("Apex")
+
+Each individually referred to as a "Party" and collectively as the "Parties."
+
+RECITALS
+
+The Parties wish to explore a potential business relationship concerning a joint data analytics platform development project (the "Purpose"). In connection with the Purpose, each Party may disclose to the other certain confidential and proprietary information. The Parties desire to establish the terms under which such information will be disclosed and protected.
+
+ARTICLE 1 — DEFINITION OF CONFIDENTIAL INFORMATION
+
+1.1 "Confidential Information" means any and all information, whether written, oral, electronic, visual, or in any other form, that is disclosed by either Party (the "Disclosing Party") to the other Party (the "Receiving Party"), either directly or indirectly, including but not limited to:
+
+(a) Technical information: software code, algorithms, architectures, designs, specifications, prototypes, inventions, discoveries, research data, development tools, and technical documentation;
+
+(b) Business information: business plans, strategies, financial information, projections, pricing, customer lists, vendor relationships, marketing plans, and operational procedures;
+
+(c) Personnel information: employee information, organizational structures, compensation data, and human resources policies;
+
+(d) Legal information: contracts, agreements, legal opinions, litigation matters, and intellectual property portfolios; and
+
+(e) Any other information that is marked as "Confidential," "Proprietary," or with a similar designation, or that a reasonable person would understand to be confidential given the nature of the information and circumstances of disclosure.
+
+1.2 Confidential Information shall also include the existence and terms of this Agreement and the fact that discussions or negotiations are taking place between the Parties.
+
+ARTICLE 2 — OBLIGATIONS OF THE RECEIVING PARTY
+
+2.1 Non-Disclosure. The Receiving Party shall not disclose any Confidential Information of the Disclosing Party to any third party without the prior written consent of the Disclosing Party, except as expressly permitted by this Agreement.
+
+2.2 Limited Use. The Receiving Party shall use the Confidential Information solely for the Purpose and shall not use it for any other purpose, including but not limited to developing competing products or services.
+
+2.3 Standard of Care. The Receiving Party shall protect the Confidential Information using at least the same degree of care that it uses to protect its own confidential information of a similar nature, but in no event less than reasonable care.
+
+2.4 Authorized Recipients. The Receiving Party may disclose Confidential Information only to its employees, officers, directors, contractors, and professional advisors ("Authorized Recipients") who: (a) have a need to know such information in connection with the Purpose; (b) have been informed of the confidential nature of the information; and (c) are bound by written obligations of confidentiality and non-use no less restrictive than those contained in this Agreement.
+
+2.5 Responsibility. The Receiving Party shall be responsible for any breach of this Agreement by its Authorized Recipients.
+
+ARTICLE 3 — EXCLUSIONS
+
+3.1 The obligations under this Agreement shall not apply to any information that:
+
+(a) was publicly known at the time of disclosure or becomes publicly known through no wrongful act or omission of the Receiving Party;
+
+(b) was rightfully known to the Receiving Party prior to disclosure, as evidenced by written records predating such disclosure;
+
+(c) is independently developed by the Receiving Party without use of or reference to the Disclosing Party's Confidential Information, as demonstrated by documentary evidence;
+
+(d) is rightfully received from a third party without any obligation of confidentiality; or
+
+(e) is approved for release by prior written authorization of the Disclosing Party.
+
+ARTICLE 4 — COMPELLED DISCLOSURE
+
+4.1 If the Receiving Party is compelled by law, regulation, or legal process (including a subpoena, court order, or governmental investigation) to disclose any Confidential Information, the Receiving Party shall:
+
+(a) provide the Disclosing Party with prompt written notice of such requirement (to the extent legally permitted) so that the Disclosing Party may seek a protective order or other appropriate remedy;
+
+(b) cooperate with the Disclosing Party, at the Disclosing Party's expense, in seeking such protective order or remedy;
+
+(c) disclose only that portion of the Confidential Information that is legally required to be disclosed; and
+
+(d) use commercially reasonable efforts to ensure that any Confidential Information so disclosed is treated as confidential by the recipient.
+
+ARTICLE 5 — INTELLECTUAL PROPERTY
+
+5.1 Retention of Rights. Nothing in this Agreement shall be construed as granting any license, ownership interest, or other rights in or to any Confidential Information, intellectual property, or other proprietary rights of either Party.
+
+5.2 No Obligation. Nothing in this Agreement obligates either Party to enter into any further agreement, transaction, or business relationship. Each Party reserves the right to terminate discussions at any time for any reason.
+
+ARTICLE 6 — RETURN AND DESTRUCTION OF MATERIALS
+
+6.1 Upon written request of the Disclosing Party or upon termination or expiration of this Agreement, the Receiving Party shall promptly:
+
+(a) return to the Disclosing Party all tangible materials containing Confidential Information;
+
+(b) permanently delete or destroy all electronic copies of Confidential Information in its possession or control; and
+
+(c) certify in writing to the Disclosing Party that it has complied with these obligations.
+
+6.2 Notwithstanding the foregoing, the Receiving Party may retain one archival copy of the Confidential Information solely for legal compliance purposes, subject to the continuing confidentiality obligations of this Agreement.
+
+ARTICLE 7 — TERM AND TERMINATION
+
+7.1 Term. This Agreement shall remain in effect for a period of three (3) years from the Effective Date, unless earlier terminated as provided herein.
+
+7.2 Termination. Either Party may terminate this Agreement at any time by providing thirty (30) days' prior written notice to the other Party.
+
+7.3 Survival. The obligations of confidentiality and non-use set forth in this Agreement shall survive termination or expiration of this Agreement for a period of five (5) years following such termination or expiration. With respect to any Confidential Information that constitutes a trade secret under applicable law, the obligations shall survive for as long as such information remains a trade secret.
+
+ARTICLE 8 — REMEDIES
+
+8.1 Injunctive Relief. Each Party acknowledges that any breach of this Agreement may cause irreparable harm to the Disclosing Party that cannot be adequately compensated by monetary damages alone. Accordingly, the Disclosing Party shall be entitled to seek injunctive or other equitable relief to prevent or restrain any breach or threatened breach of this Agreement, without the necessity of proving actual damages or posting any bond.
+
+8.2 Other Remedies. The right to seek injunctive relief shall not limit the Disclosing Party's right to pursue any other remedies available at law or in equity, including monetary damages.
+
+8.3 Indemnification. The Receiving Party shall indemnify and hold harmless the Disclosing Party from and against any and all losses, damages, claims, liabilities, costs, and expenses (including reasonable attorneys' fees) arising out of or relating to any breach of this Agreement by the Receiving Party or its Authorized Recipients.
+
+ARTICLE 9 — GENERAL PROVISIONS
+
+9.1 Governing Law. This Agreement shall be governed by and construed in accordance with the laws of the State of California, without regard to its conflict of laws principles.
+
+9.2 Jurisdiction. Any legal action or proceeding arising out of or relating to this Agreement shall be brought exclusively in the state or federal courts located in Santa Clara County, California, and each Party hereby consents to the personal jurisdiction of such courts.
+
+9.3 Entire Agreement. This Agreement constitutes the entire agreement between the Parties with respect to the subject matter hereof and supersedes all prior agreements, understandings, and negotiations, whether written or oral.
+
+9.4 Amendment. This Agreement may not be amended or modified except by a written instrument signed by authorized representatives of both Parties.
+
+9.5 Waiver. No waiver of any provision of this Agreement shall be effective unless made in writing and signed by the waiving Party. A waiver of any breach shall not constitute a waiver of any subsequent breach.
+
+9.6 Severability. If any provision of this Agreement is found to be invalid or unenforceable, the remaining provisions shall continue in full force and effect, and the invalid provision shall be modified to the minimum extent necessary to make it valid and enforceable.
+
+9.7 Assignment. Neither Party may assign this Agreement or any rights or obligations hereunder without the prior written consent of the other Party. Any attempted assignment without such consent shall be void.
+
+9.8 Notices. All notices under this Agreement shall be in writing and delivered by personal delivery, overnight courier, or certified mail to the addresses set forth above, or to such other address as a Party may designate by written notice.
+
+9.9 Counterparts. This Agreement may be executed in counterparts, each of which shall be deemed an original, and all of which together shall constitute one agreement.
+
+IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date.
+
+NEXUS INNOVATIONS CORP.
+
+By: ___________________________
+Name: Dr. James Liu
+Title: Chief Technology Officer
+Date: March 1, 2025
+
+APEX DATA SYSTEMS LLC
+
+By: ___________________________
+Name: Patricia Gonzalez
+Title: Managing Director
+Date: March 1, 2025

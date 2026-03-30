@@ -1,0 +1,32 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+dist/
+build/
+
+# Environment
+.env
+
+# Data (keep structure, ignore contents)
+data/processed/*
+data/vectorstore/*
+data/query_history.json
+!data/raw/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Evaluation outputs
+evaluation_results/
+
+# Misc
+*.zip
+*.tar.gz

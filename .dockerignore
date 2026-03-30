@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+.git/
+.env
+*.egg-info/
+.pytest_cache/
+notebooks/
+evaluation_results/
+*.zip
+*.tar.gz
+.vscode/
