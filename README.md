@@ -1,311 +1,188 @@
 # Legal RAG Pipeline with Hallucination Detection
 
-A production-grade Retrieval-Augmented Generation (RAG) system for legal documents,
-featuring an NLI-based hallucination detector, hybrid retrieval, and a full RAGAS evaluation suite.
+A RAG (Retrieval-Augmented Generation) system built for legal documents. Upload contracts, NDAs, or employment agreements, ask questions, and get answers that are checked for hallucinations using an NLI model.
+
+The main idea: instead of blindly trusting LLM output, every claim in the answer is verified against the retrieved source text. If the model makes something up, the system catches it.
+
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green)
+![React](https://img.shields.io/badge/React-18-61dafb)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)
+![Tests](https://img.shields.io/badge/Tests-37%20passed-brightgreen)
 
 ---
 
-## Project Structure
+## What it does
+
+1. **Upload** legal PDFs/TXT files through the web UI
+2. **Ask** questions like "What is the non-compete period?" or "Who owns the IP?"
+3. **Get answers** with chunk citations ([Chunk 1], [Chunk 2])
+4. **See a faithfulness score** — what percentage of claims are actually supported by the source documents
+5. **Review individual claims** — each one is labeled as grounded, ungrounded, or contradicted
+
+## How retrieval works
+
+Documents go through a two-stage retrieval pipeline:
+
+```
+Query
+ │
+ ├── Dense retrieval (FAISS + BGE embeddings)
+ ├── Sparse retrieval (BM25 keyword matching)
+ │
+ ├── Reciprocal Rank Fusion (merges both result sets)
+ │
+ └── Cross-encoder re-ranking (scores each query-chunk pair)
+      └── Top 5 chunks → sent to LLM
+```
+
+The hybrid approach (dense + sparse + RRF) consistently outperforms either method alone. The cross-encoder re-ranker adds another layer by actually reading the query and chunk together, which catches things embedding similarity misses.
+
+## How hallucination detection works
+
+After the LLM generates an answer:
+
+1. The answer is split into atomic claims (individual factual statements)
+2. Each claim is scored against the retrieved chunks using a DeBERTa NLI model
+3. Claims are classified as **entailed** (grounded), **neutral** (ungrounded), or **contradicted**
+4. A faithfulness score = grounded claims / total claims
+
+This isn't perfect — the NLI model can be overly strict with paraphrased language. In testing, straightforward factual questions (like "What are the license restrictions?") score 100%, while broader questions sometimes score lower even when the answer is correct. That's a known limitation.
+
+
+```
+
+## Tech stack
+
+- **LLM**: Llama 3.3 70B via Groq (free tier)
+- **Embeddings**: BAAI/bge-small-en-v1.5 (local, no API needed)
+- **Vector store**: FAISS (IndexFlatIP with L2 normalization)
+- **Sparse retrieval**: BM25 via rank_bm25
+- **Re-ranker**: cross-encoder/ms-marco-MiniLM-L-12-v2
+- **Hallucination detection**: cross-encoder/nli-deberta-v3-large
+- **Backend**: FastAPI with SSE streaming
+- **Frontend**: React 18 (single HTML file, Babel in-browser)
+- **Containerization**: Docker
+
+## Project structure
 
 ```
 legal_rag/
+├── server.py              # FastAPI backend (API + streaming + upload)
+├── app.py                 # Gradio app (alternative UI)
+├── ingest.py              # CLI document ingestion
+├── evaluate.py            # CLI evaluation runner
+├── Dockerfile
+├── docker-compose.yml
+│
+├── frontend/
+│   └── index.html         # React frontend (single file)
+│
 ├── src/
-│   ├── ingestion.py          # PDF/HTML parsing, cleaning, clause-level chunking
-│   ├── embeddings.py         # Embedding model wrapper + FAISS index management
-│   ├── retrieval.py          # Dense + BM25 sparse + RRF hybrid retrieval
-│   ├── generation.py         # LLM generation with citation prompting
-│   ├── hallucination.py      # NLI-based faithfulness scorer + claim extractor
-│   ├── pipeline.py           # End-to-end RAG pipeline orchestrator
-│   ├── evaluation.py         # RAGAS + custom evaluation harness
-│   └── config.py             # All configuration in one place
-├── data/
-│   ├── raw/                  # Drop your PDFs/HTMLs here
-│   ├── processed/            # Cleaned chunks (auto-generated)
-│   └── vectorstore/          # FAISS index files (auto-generated)
+│   ├── config.py           # All settings from .env
+│   ├── ingestion.py        # PDF/HTML/TXT parsing, clause-level chunking
+│   ├── embeddings.py       # BGE embeddings + FAISS index
+│   ├── retrieval.py        # Hybrid retrieval (dense + BM25 + RRF)
+│   ├── reranker.py         # Cross-encoder re-ranking + query expansion
+│   ├── generation.py       # LLM prompting with citation format
+│   ├── hallucination.py    # NLI-based claim verification
+│   ├── pipeline.py         # Orchestrates retrieval → generation → verification
+│   └── evaluation.py       # Ablation study + RAGAS + hallucination analysis
+│
 ├── tests/
-│   ├── test_ingestion.py
-│   ├── test_retrieval.py
-│   └── test_hallucination.py
-├── notebooks/
-│   └── evaluation_analysis.ipynb
-├── app.py                    # Gradio web interface
-├── ingest.py                 # CLI: ingest documents into vector store
-├── evaluate.py               # CLI: run full evaluation suite
-├── requirements.txt
-└── .env.example
+│   └── test_legal_rag.py   # 37 tests (no API calls needed)
+│
+└── data/
+    ├── raw/                # Upload documents here
+    ├── processed/          # Chunked documents (auto-generated)
+    └── vectorstore/        # FAISS + BM25 indexes (auto-generated)
 ```
 
----
+## Setup
 
-## Prerequisites
+### Local (without Docker)
 
-- Python 3.10 or 3.11 (recommended)
-- 8 GB RAM minimum (16 GB recommended for local NLI model)
-- An OpenAI API key (or Groq API key for free Llama-3 access)
-- Git
-
----
-
-## Step-by-Step Setup
-
-### Step 1 — Clone or download the project
-
-If you downloaded as a zip, unzip it. Otherwise:
 ```bash
-git clone <your-repo-url>
-cd legal_rag
-```
+# Clone
+git clone https://github.com/YOUR_USERNAME/legal-rag-pipeline.git
+cd legal-rag-pipeline
 
-### Step 2 — Create a Python virtual environment
-
-Always use a virtual environment to avoid dependency conflicts.
-
-**On macOS / Linux:**
-```bash
-python3.11 -m venv venv
-source venv/bin/activate
-```
-
-**On Windows (Command Prompt):**
-```cmd
+# Virtual environment
 python -m venv venv
-venv\Scripts\activate.bat
-```
+venv\Scripts\Activate    # Windows
+# source venv/bin/activate  # Mac/Linux
 
-**On Windows (PowerShell):**
-```powershell
-python -m venv venv
-venv\Scripts\Activate.ps1
-```
-
-You should see `(venv)` at the start of your terminal prompt.
-
-### Step 3 — Install dependencies
-
-```bash
-pip install --upgrade pip
+# Install
 pip install -r requirements.txt
+pip install fastapi uvicorn
+
+# Set API key
+copy .env.example .env
+# Edit .env → add your GROQ_API_KEY (free at https://console.groq.com)
+
+# Start API server
+python server.py
+
+# In another terminal, serve frontend
+cd frontend
+python -m http.server 3000
+
+# Open http://localhost:3000
 ```
 
-This will take 3–5 minutes. It downloads PyTorch, Hugging Face models, and all other dependencies.
-
-**If you get errors on Windows with torch:**
-```bash
-pip install torch --index-url https://download.pytorch.org/whl/cpu
-pip install -r requirements.txt
-```
-
-### Step 4 — Set up API keys
-
-Copy the example environment file:
-```bash
-cp .env.example .env
-```
-
-Open `.env` in any text editor and fill in your keys:
-
-```
-OPENAI_API_KEY=sk-...        # Get from https://platform.openai.com/api-keys
-GROQ_API_KEY=gsk_...         # OPTIONAL: free Llama-3 at https://console.groq.com
-```
-
-**Which LLM to use:**
-- `openai` — Best quality, costs ~$0.01–0.05 per query with GPT-4o-mini
-- `groq` — Free tier, uses Llama-3-70B, slightly lower quality
-
-Set `LLM_PROVIDER` in `.env` to `openai` or `groq`.
-
-### Step 5 — Download the NLI model (one-time, ~1.4 GB)
-
-The hallucination detector uses a DeBERTa NLI model. It downloads automatically on first run,
-but you can pre-download it:
+### Docker
 
 ```bash
-python -c "from sentence_transformers import CrossEncoder; CrossEncoder('cross-encoder/nli-deberta-v3-large')"
+docker compose up --build
+# Open http://localhost:3000
 ```
 
-This downloads to `~/.cache/huggingface/`. It only happens once.
-
-### Step 6 — Add your legal documents
-
-Place your PDF or HTML files in the `data/raw/` folder.
-
-**Don't have documents yet? Use these free sources:**
-- **Contracts:** https://www.lawinsider.com/contracts (free contract database)
-- **Case law:** https://case.law (free US case law, bulk downloads available)
-- **SEC filings:** https://www.sec.gov/cgi-bin/browse-edgar (10-K, contracts in HTML)
-
-For testing, even 5–10 PDFs work fine.
-
-### Step 7 — Ingest documents into the vector store
+### Run tests
 
 ```bash
-python ingest.py --input data/raw/ --reset
+pytest tests/test_legal_rag.py -v
 ```
 
-**What this does:**
-1. Parses all PDFs and HTMLs in `data/raw/`
-2. Cleans and chunks by clause/section
-3. Generates embeddings using `text-embedding-3-large`
-4. Builds a FAISS index + BM25 index
-5. Saves everything to `data/processed/` and `data/vectorstore/`
+## Sample results
 
-**Options:**
-```bash
-python ingest.py --input data/raw/ --reset          # Full re-index
-python ingest.py --input data/raw/newdoc.pdf        # Add single file
-python ingest.py --input data/raw/ --chunk-size 400 # Custom chunk size
-```
+Tested with a software license agreement, mutual NDA, and employment agreement:
 
-You should see output like:
-```
-[1/3] Parsing: contract_acme.pdf ... 47 chunks extracted
-[2/3] Parsing: case_smith_v_jones.pdf ... 31 chunks extracted
-[3/3] Parsing: nda_template.pdf ... 18 chunks extracted
-Total chunks: 96
-Building FAISS index ...  done (96 vectors, dim=3072)
-Building BM25 index  ...  done
-Saved to data/vectorstore/
-```
+| Query | Faithfulness | Claims |
+|-------|-------------|--------|
+| What are the license restrictions? | 100% | 3/3 grounded |
+| What severance benefits is the employee entitled to? | 100% | 2/2 grounded |
+| Can you explain the license agreement briefly? | 83% | 5/6 grounded |
+| What is the non-compete period? | 50% | 1/2 grounded |
+| How long do confidentiality obligations survive? | 25% | 1/4 grounded |
 
-### Step 8 — Launch the web app
+The lower scores on broader questions are usually the NLI model being strict about paraphrasing rather than the answer being wrong. This is documented as a known limitation.
+
+## Evaluation
+
+The project includes a 4-strategy retrieval ablation framework:
 
 ```bash
-python app.py
+python evaluate.py --generate-testset --no-llm --ablation --k 5
 ```
 
-Open your browser to: **http://localhost:7860**
+This compares dense-only, sparse-only, hybrid (RRF), and hybrid+re-ranker across MRR@k, Recall@k, NDCG@k, and Precision@k. The evaluation also breaks down hallucination rates by document type and legal category.
 
-The interface shows:
-- A query input box
-- The generated answer with inline citations
-- Retrieved source chunks (expandable)
-- A faithfulness score bar (green = grounded, red = hallucination risk)
-- Per-claim verification breakdown
+## Known limitations
 
-### Step 9 — Run the evaluation suite (optional but recommended)
+- **NLI strictness**: The DeBERTa model sometimes marks paraphrased but correct claims as "ungrounded." This inflates hallucination rates on broader questions.
+- **Chunk boundaries**: Legal clauses that span multiple chunks can lose context. The clause-level splitter helps but isn't perfect.
+- **Single-user**: No authentication. The query history and document store are shared.
+- **Frontend**: Built as a single HTML file with Babel for simplicity. A proper React build would be better for production.
+- **Model size**: First startup downloads ~1.5GB of models (BGE + re-ranker + DeBERTa). Subsequent starts use the cache.
 
-Generate a synthetic test set and run all metrics:
+## What I'd improve next
 
-```bash
-python evaluate.py --generate-testset --n-questions 50
-```
+- Fine-tune the NLI model on legal text to reduce false positives
+- Add chunk overlap visualization to show which parts of the source support each claim
+- Implement proper user sessions and authentication
+- Build a proper React app with a build step instead of in-browser Babel
+- Add PDF rendering in the sources panel so users can see the original document
 
-This will:
-1. Synthesize 50 QA pairs from your corpus
-2. Run your pipeline on all 50
-3. Compute: faithfulness, context recall, context precision, answer relevancy
-4. Save results to `evaluation_results.json` and print a summary table
+## License
 
-Expected output:
-```
-┌─────────────────────────┬────────┐
-│ Metric                  │ Score  │
-├─────────────────────────┼────────┤
-│ Faithfulness            │ 0.847  │
-│ Context Recall          │ 0.791  │
-│ Context Precision       │ 0.823  │
-│ Answer Relevancy        │ 0.886  │
-│ Hallucination Rate      │ 0.153  │
-└─────────────────────────┴────────┘
-```
-
-### Step 10 — Run tests
-
-```bash
-pytest tests/ -v
-```
-
----
-
-## Configuration Reference
-
-All settings live in `.env`. Here is every option:
-
-```bash
-# LLM
-LLM_PROVIDER=openai              # openai | groq
-OPENAI_API_KEY=sk-...
-GROQ_API_KEY=gsk_...
-LLM_MODEL=gpt-4o-mini            # or llama3-70b-8192 for groq
-
-# Embeddings
-EMBEDDING_MODEL=text-embedding-3-large   # OpenAI embedding model
-EMBEDDING_DIM=3072
-
-# Retrieval
-TOP_K_DENSE=10                   # Dense retrieval candidates
-TOP_K_SPARSE=10                  # BM25 retrieval candidates
-TOP_K_FINAL=5                    # Final chunks passed to LLM after RRF
-
-# Chunking
-CHUNK_SIZE=400                   # Max tokens per chunk
-CHUNK_OVERLAP=50                 # Overlap between chunks
-
-# Hallucination detection
-NLI_MODEL=cross-encoder/nli-deberta-v3-large
-NLI_THRESHOLD=0.5                # Entailment confidence threshold
-FAITHFULNESS_WARN_THRESHOLD=0.7  # Flag answers below this score
-```
-
----
-
-## Common Issues & Fixes
-
-**`ModuleNotFoundError: No module named 'faiss'`**
-```bash
-pip install faiss-cpu
-```
-
-**`openai.AuthenticationError`**
-Check your `.env` file. Make sure there are no spaces around the `=` sign.
-
-**Out of memory during NLI model load**
-In `config.py`, set `NLI_BATCH_SIZE = 4` (default is 16).
-
-**Slow ingestion on large corpora**
-Run with `--workers 4` to parallelize:
-```bash
-python ingest.py --input data/raw/ --workers 4
-```
-
-**RAGAS evaluation fails with rate limit errors**
-RAGAS calls OpenAI internally. Add a delay:
-```bash
-python evaluate.py --delay 2.0
-```
-
----
-
-## Understanding the Hallucination Score
-
-| Score | Meaning |
-|-------|---------|
-| 0.9 – 1.0 | Fully grounded — every claim is supported by retrieved context |
-| 0.7 – 0.9 | Mostly grounded — minor claims may lack explicit support |
-| 0.5 – 0.7 | Partially grounded — review the answer carefully |
-| 0.0 – 0.5 | High hallucination risk — do not rely on this answer |
-
-The score is computed as: `grounded_claims / total_claims`, where a claim is "grounded"
-if the NLI model assigns `entailment` probability > 0.5 against any retrieved chunk.
-
----
-
-## Ablation Results (Example)
-
-Run `python evaluate.py --ablation` to reproduce this table on your own corpus:
-
-| Retrieval Strategy | MRR@10 | Recall@5 |
-|--------------------|--------|----------|
-| Dense only         | 0.71   | 0.68     |
-| Sparse (BM25) only | 0.63   | 0.61     |
-| Hybrid (RRF)       | **0.81** | **0.79** |
-
----
-
-## Resume Talking Points
-
-- Built hybrid retrieval (dense + BM25 + RRF) — **+14% MRR** over dense-only baseline
-- Implemented NLI-based hallucination detector using DeBERTa, achieving per-claim faithfulness scoring
-- Evaluated on 50-query synthetic test set; measured 6 metrics including faithfulness, context recall, context precision
-- Identified that case law documents had 2× higher hallucination rate than contracts — logged as finding
+MIT
