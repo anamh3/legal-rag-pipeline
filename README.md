@@ -183,6 +183,4 @@ This compares dense-only, sparse-only, hybrid (RRF), and hybrid+re-ranker across
 - Build a proper React app with a build step instead of in-browser Babel
 - Add PDF rendering in the sources panel so users can see the original document
 
-## License
-
-MIT
+## Licens
